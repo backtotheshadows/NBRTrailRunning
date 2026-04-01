@@ -137,11 +137,9 @@
     .inline-edit-row { flex-direction: column; align-items: stretch; }
     .ie-field { width: 100%; }
     .ie-name, .ie-phone, .ie-seats { width: 100% !important; }
-    .ie-save, .ie-cancel, .ie-delete { width: auto; height: 40px; }
-    .inline-edit-row { flex-wrap: wrap; }
-    .inline-edit-row .ie-save { margin-right: auto; }
-    .inline-edit-row .ie-cancel { margin: 0 auto; }
-    .inline-edit-row .ie-delete { margin-left: auto; }
+    .ie-save, .ie-cancel, .ie-delete { height: 40px; flex: 1; }
+    .inline-edit-row { flex-wrap: wrap; gap: 6px; }
+    .inline-edit-row > .ie-field { width: 100%; }
     .assign-select { width: auto; max-width: 180px; margin-left: auto; }
     .chip { font-size: 11px; padding: 5px 10px; }
   }
@@ -475,9 +473,7 @@ function renderDrivers() {
         <div class="inline-edit-row">
           <div class="ie-field"><label>Name</label><input class="ie-name" id="re-name-${rid}" value="${r.name}" /></div>
           <div class="ie-field"><label>Phone</label><input class="ie-phone" id="re-phone-${rid}" value="${r.phone || ""}" placeholder="(917) 555-0100" /></div>
-          <button class="ie-save" onclick="saveRiderEdit('${rid}')">Save</button>
-          <button class="ie-cancel" onclick="toggleRiderEdit('${rid}')">Cancel</button>
-          <button class="ie-delete" onclick="removeRider('${rid}')">Delete</button>
+          <button class="ie-save" onclick="saveRiderEdit('${rid}')">Save</button><button class="ie-cancel" onclick="toggleRiderEdit('${rid}')">Cancel</button><button class="ie-delete" onclick="removeRider('${rid}')">Delete</button>
         </div>
       </div>`;
     }).join("");
@@ -499,9 +495,7 @@ function renderDrivers() {
           <div class="ie-field"><label>Name</label><input class="ie-name" id="de-name-${dId}" value="${driver.name}" /></div>
           <div class="ie-field"><label>Phone</label><input class="ie-phone" id="de-phone-${dId}" value="${driver.phone || ""}" /></div>
           <div class="ie-field"><label>Seats</label><input class="ie-seats" id="de-seats-${dId}" type="number" min="1" max="8" value="${driver.seats}" /></div>
-          <button class="ie-save" onclick="saveDriverEdit('${dId}')">Save</button>
-          <button class="ie-cancel" onclick="toggleDriverEdit('${dId}')">Cancel</button>
-          <button class="ie-delete" onclick="removeDriver('${dId}')">Delete</button>
+          <button class="ie-save" onclick="saveDriverEdit('${dId}')">Save</button><button class="ie-cancel" onclick="toggleDriverEdit('${dId}')">Cancel</button><button class="ie-delete" onclick="removeDriver('${dId}')">Delete</button>
         </div>
       </div>
       <div class="riders-area">${riderRows}${emptySlots}</div>
@@ -550,9 +544,7 @@ function renderUnassigned() {
     editDiv.innerHTML = `<div class="inline-edit-row">
       <div class="ie-field"><label>Name</label><input class="ie-name" id="re-name-${rId}" value="${r.name}" /></div>
       <div class="ie-field"><label>Phone</label><input class="ie-phone" id="re-phone-${rId}" value="${r.phone || ""}" placeholder="(917) 555-0100" /></div>
-      <button class="ie-save" onclick="saveRiderEdit('${rId}')">Save</button>
-      <button class="ie-cancel" onclick="toggleUnassignedEdit('${rId}')">Cancel</button>
-      <button class="ie-delete" onclick="removeRider('${rId}')">Delete</button>
+      <button class="ie-save" onclick="saveRiderEdit('${rId}')">Save</button><button class="ie-cancel" onclick="toggleUnassignedEdit('${rId}')">Cancel</button><button class="ie-delete" onclick="removeRider('${rId}')">Delete</button>
     </div>`;
     wrap.appendChild(row);
     wrap.appendChild(editDiv);
