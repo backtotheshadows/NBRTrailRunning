@@ -113,6 +113,8 @@
   .ie-name { width: 140px; } .ie-phone { width: 140px; } .ie-seats { width: 60px; }
   .ie-save { height: 32px; padding: 0 14px; border-radius: var(--radius); border: none; background: #3d7a28; color: #fff; font-size: 13px; font-family: "DM Sans", sans-serif; font-weight: 500; cursor: pointer; }
   .ie-cancel { height: 32px; padding: 0 12px; border-radius: var(--radius); border: 1px solid var(--border2); background: transparent; color: var(--text2); font-size: 13px; font-family: "DM Sans", sans-serif; cursor: pointer; }
+  .ie-delete { height: 32px; padding: 0 12px; border-radius: var(--radius); border: 1px solid #f0bbbb; background: transparent; color: var(--red-text); font-size: 13px; font-family: "DM Sans", sans-serif; cursor: pointer; }
+  .ie-delete:hover { background: var(--red-bg); }
 
   .unassigned-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 12px 16px; }
   .unassigned-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 6px 0; }
@@ -175,9 +177,9 @@
         <div class="edit-field"><label>Run location URL</label><input type="text" id="runUrl" placeholder="alltrails.com/..." /></div>
         <div class="edit-field"><label>Post-run bagels URL</label><input type="text" id="bagelUrl" placeholder="yelp.com/..." /></div>
         <div class="strava-3">
-          <div class="edit-field"><label>Strava route 1</label><input type="text" id="strava1" placeholder="strava.com/routes/..." /></div>
-          <div class="edit-field"><label>Strava route 2</label><input type="text" id="strava2" placeholder="strava.com/routes/..." /></div>
-          <div class="edit-field"><label>Strava route 3</label><input type="text" id="strava3" placeholder="strava.com/routes/..." /></div>
+          <div class="edit-field"><label>Strava Route 1</label><input type="text" id="strava1" placeholder="strava.com/routes/..." /></div>
+          <div class="edit-field"><label>Strava Route 2</label><input type="text" id="strava2" placeholder="strava.com/routes/..." /></div>
+          <div class="edit-field"><label>Strava Route 3</label><input type="text" id="strava3" placeholder="strava.com/routes/..." /></div>
         </div>
       </div>
       <button class="save-btn" onclick="saveDetails()">Save</button>
@@ -186,7 +188,7 @@
 
   <div class="add-card">
     <h2>Carpool sign-up</h2>
-    <p class="sub">Volunteer as a driver or sign up as a rider.</p>
+    <p class="sub">Sign up as a driver or a rider. If you sign up to be a rider your name will be listed at the bottom under unassigned riders. You can then choose your ride by assigning yourself to a driver. If there are no available seats, hold tight we'll find one!</p>
     <div class="form-row">
       <div class="f"><label>Your name</label><input type="text" id="nameInput" placeholder="Full name" /></div>
       <div class="f"><label>Phone</label><input type="tel" id="phoneInput" placeholder="(917) 555-0100" /></div>
@@ -202,11 +204,11 @@
     <div class="error" id="addError"></div>
   </div>
 
-  <div class="status-bar"><div class="status-dot" id="statusDot"></div><span id="statusText">Connecting...</span></div>
-  <div class="summary-bar" id="summaryBar"></div>
+  <div class="summary-bar" id="summaryBar" style="display:none"></div>
   <div id="driversSection"></div>
   <div id="unassignedSection"></div>
-  <div style="margin-top:2rem;text-align:center;">
+  <div class="status-bar" style="justify-content:center;margin-top:1.5rem;"><div class="status-dot" id="statusDot"></div><span id="statusText">Connecting...</span></div>
+  <div style="text-align:center;margin-top:0.5rem;">
     <button onclick="requestClear()" style="font-size:12px;color:var(--text3);background:none;border:none;cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif;">Admin: clear all data</button>
   </div>
 </div>
@@ -331,9 +333,9 @@ function applyTripDisplay(t) {
   document.getElementById("linksBar").innerHTML =
     chip(t.meetUrl,  "Meeting spot",   "meet")   +
     chip(t.runUrl,   "Run location",   "run")    +
-    chip(t.strava1,  "Strava Route 1", "strava") +
-    chip(t.strava2,  "Strava Route 2", "strava") +
-    chip(t.strava3,  "Strava Route 3", "strava") +
+    chip(t.strava1,  "Strava route 1", "strava") +
+    chip(t.strava2,  "Strava route 2", "strava") +
+    chip(t.strava3,  "Strava route 3", "strava") +
     chip(t.bagelUrl, "Post-run bagels","bagel");
 }
 function restoreEditFields(t) {
@@ -436,22 +438,7 @@ function initials(name) {
 }
 function render() { renderSummary(); renderDrivers(); renderUnassigned(); }
 
-function renderSummary() {
-  const drivers = Object.values(driversData);
-  const riders  = Object.values(ridersData);
-  const totalSeats  = drivers.reduce((a, d) => a + (d.seats || 0), 0);
-  const assigned    = riders.filter(r => r.driverId).length;
-  const unassigned  = riders.filter(r => !r.driverId).length;
-  const bar = document.getElementById("summaryBar");
-  if (!drivers.length && !riders.length) { bar.innerHTML = ""; return; }
-  bar.innerHTML = `
-    <div class="stat"><strong>${drivers.length}</strong> driver${drivers.length !== 1 ? "s" : ""}</div>
-    <div class="stat"><strong>${riders.length}</strong> rider${riders.length !== 1 ? "s" : ""}</div>
-    <div class="stat"><strong>${totalSeats}</strong> total seats</div>
-    <div class="stat"><strong>${assigned}</strong> assigned</div>
-    ${unassigned ? `<div class="stat warn"><strong>${unassigned}</strong> unassigned</div>` : ""}
-  `;
-}
+function renderSummary() {}
 
 function renderDrivers() {
   const sec = document.getElementById("driversSection");
@@ -485,6 +472,7 @@ function renderDrivers() {
           <div class="ie-field"><label>Phone</label><input class="ie-phone" id="re-phone-${rid}" value="${r.phone || ""}" placeholder="(917) 555-0100" /></div>
           <button class="ie-save" onclick="saveRiderEdit('${rid}')">Save</button>
           <button class="ie-cancel" onclick="toggleRiderEdit('${rid}')">Cancel</button>
+          <button class="ie-delete" onclick="removeRider('${rid}')">Delete</button>
         </div>
       </div>`;
     }).join("");
@@ -508,6 +496,7 @@ function renderDrivers() {
           <div class="ie-field"><label>Seats</label><input class="ie-seats" id="de-seats-${dId}" type="number" min="1" max="8" value="${driver.seats}" /></div>
           <button class="ie-save" onclick="saveDriverEdit('${dId}')">Save</button>
           <button class="ie-cancel" onclick="toggleDriverEdit('${dId}')">Cancel</button>
+          <button class="ie-delete" onclick="removeDriver('${dId}')">Delete</button>
         </div>
       </div>
       <div class="riders-area">${riderRows}${emptySlots}</div>
@@ -549,7 +538,6 @@ function renderUnassigned() {
         : `<span style="font-size:12px;color:var(--red-text);">No seats available</span>`
       }
       <button class="rm-btn" onclick="toggleUnassignedEdit('${rId}')">edit</button>
-      <button class="rm-btn" onclick="removeRider('${rId}')">remove</button>
     `;
     const editDiv = document.createElement("div");
     editDiv.className = "inline-edit";
@@ -559,6 +547,7 @@ function renderUnassigned() {
       <div class="ie-field"><label>Phone</label><input class="ie-phone" id="re-phone-${rId}" value="${r.phone || ""}" placeholder="(917) 555-0100" /></div>
       <button class="ie-save" onclick="saveRiderEdit('${rId}')">Save</button>
       <button class="ie-cancel" onclick="toggleUnassignedEdit('${rId}')">Cancel</button>
+      <button class="ie-delete" onclick="removeRider('${rId}')">Delete</button>
     </div>`;
     wrap.appendChild(row);
     wrap.appendChild(editDiv);
