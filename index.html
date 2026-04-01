@@ -137,8 +137,9 @@
     .inline-edit-row { flex-direction: column; align-items: stretch; }
     .ie-field { width: 100%; }
     .ie-name, .ie-phone, .ie-seats { width: 100% !important; }
-    .ie-save, .ie-cancel { width: 100%; height: 40px; }
-    .assign-select { width: 100%; }
+    .ie-save, .ie-cancel, .ie-delete { width: auto; height: 36px; flex: 1; }
+    .inline-edit-row { flex-wrap: wrap; }
+    .assign-select { width: auto; max-width: 180px; margin-left: auto; }
     .chip { font-size: 11px; padding: 5px 10px; }
   }
 </style>
@@ -192,7 +193,7 @@
     <p class="sub">Sign up as a driver or a rider. If you sign up to be a rider your name will be listed at the bottom under unassigned riders. You can then choose your ride by assigning yourself to a driver. If there are no available seats, hold tight we'll find one!</p>
     <div class="form-row">
       <div class="f"><label>Your name</label><input type="text" id="nameInput" placeholder="Full name" /></div>
-      <div class="f"><label>Phone</label><input type="tel" id="phoneInput" placeholder="(917) 555-0100" /></div>
+      <div class="f"><label>Phone <span style="text-transform:none;font-weight:400;color:var(--text3);">(optional)</span></label><input type="tel" id="phoneInput" placeholder="(917) 555-0100" /></div>
       <div class="f"><label>Role</label>
         <select id="roleSelect" onchange="toggleSeats()">
           <option value="driver">Driver</option>
