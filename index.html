@@ -481,7 +481,7 @@ function renderDrivers() {
           ${r.phone ? `<div class="person-phone">${r.phone}</div>` : ""}
         </div>
         <button class="rm-btn" onclick="toggleRiderEdit('${rid}')">edit</button>
-        <button class="rm-btn" onclick="assignRider('${rid}', null)">remove</button>
+        <button class="rm-btn" onclick="assignRider('${rid}', null)">unassign</button>
       </div>
       <div class="inline-edit" id="rider-edit-${rid}">
         <div class="inline-edit-row">
