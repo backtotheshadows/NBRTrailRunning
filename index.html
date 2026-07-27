@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>NBR Trail Run Carpool</title>
 <link rel="icon" type="image/png" href="logo1.png" />
- <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet" />
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -21,7 +21,6 @@
   }
   body { font-family: "DM Sans", sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 2rem 1rem 4rem; }
   .page { max-width: 760px; margin: 0 auto; }
-
   .trip-header { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem; }
   .trip-title-row { display: flex; align-items: center; gap: 12px; margin-bottom: 0.25rem; }
   .logo-box { width: 56px; height: 56px; border-radius: 50%; flex-shrink: 0; overflow: hidden; }
@@ -38,7 +37,6 @@
   .chip.bagel { background: var(--amber-bg); color: var(--amber-text); }
   .edit-btn { font-size: 12px; padding: 5px 14px; border-radius: 99px; border: 1px solid var(--border2); background: transparent; color: var(--text2); cursor: pointer; white-space: nowrap; font-family: "DM Sans", sans-serif; transition: background 0.15s; }
   .edit-btn:hover { background: var(--surface2); }
-
   .edit-panel { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border); display: none; }
   .edit-panel.open { display: block; }
   .edit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -47,10 +45,17 @@
   .edit-field label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; }
   .edit-field input { height: 36px; padding: 0 10px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface2); color: var(--text); font-size: 13px; font-family: "DM Sans", sans-serif; outline: none; }
   .edit-field input:focus { border-color: #7aab5a; box-shadow: 0 0 0 3px rgba(122,171,90,0.15); }
+  .link-edit-list { display: flex; flex-direction: column; gap: 8px; }
+  .link-edit-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 6px 8px; }
+  .link-edit-row .hide-toggle { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text2); white-space: nowrap; width: 54px; flex-shrink: 0; }
+  .link-edit-row .hide-toggle input { width: 14px; height: 14px; flex-shrink: 0; }
+  .link-label-input, .link-url-input { height: 34px; padding: 0 10px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 13px; font-family: "DM Sans", sans-serif; outline: none; }
+  .link-label-input { flex: 0 0 130px; }
+  .link-url-input { flex: 1 1 180px; }
+  .link-label-input:focus, .link-url-input:focus { border-color: #7aab5a; box-shadow: 0 0 0 3px rgba(122,171,90,0.15); }
   .strava-3 { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
   .save-btn { margin-top: 12px; padding: 8px 20px; border-radius: var(--radius); border: none; background: #3d7a28; color: #fff; font-size: 14px; font-family: "DM Sans", sans-serif; font-weight: 500; cursor: pointer; }
   .save-btn:hover { background: #2f6020; }
-
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center; }
   .modal-overlay.open { display: flex; }
   .modal { background: var(--surface); border-radius: var(--radius-lg); padding: 1.5rem; width: 100%; max-width: 340px; margin: 1rem; }
@@ -62,7 +67,6 @@
   .modal-ok { flex: 1; height: 38px; border-radius: var(--radius); border: none; background: #3d7a28; color: #fff; font-size: 14px; font-family: "DM Sans", sans-serif; font-weight: 500; cursor: pointer; }
   .modal-cancel { height: 38px; padding: 0 16px; border-radius: var(--radius); border: 1px solid var(--border2); background: transparent; color: var(--text2); font-size: 14px; font-family: "DM Sans", sans-serif; cursor: pointer; }
   .modal-error { font-size: 12px; color: var(--red-text); margin-bottom: 8px; min-height: 16px; }
-
   .add-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; }
   .add-card h2 { font-family: "DM Serif Display", serif; font-size: 20px; font-weight: 400; margin-bottom: 0.25rem; }
   .add-card .sub { font-size: 13px; color: var(--text2); margin-bottom: 1rem; }
@@ -75,17 +79,14 @@
   .add-submit { height: 38px; padding: 0 18px; border-radius: var(--radius); border: none; background: #3d7a28; color: #fff; font-size: 14px; font-family: "DM Sans", sans-serif; font-weight: 500; cursor: pointer; }
   .add-submit:hover { background: #2f6020; }
   .error { font-size: 12px; color: var(--red-text); margin-top: 6px; min-height: 16px; }
-
   .status-bar { font-size: 12px; color: var(--text3); margin-bottom: 1rem; display: flex; align-items: center; gap: 6px; }
   .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text3); flex-shrink: 0; }
   .status-dot.live { background: #3d7a28; }
-
   .summary-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.25rem; }
   .stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 14px; font-size: 13px; color: var(--text2); }
   .stat strong { color: var(--text); font-weight: 600; }
   .stat.warn { background: var(--red-bg); border-color: #f0bbbb; color: var(--red-text); }
   .stat.warn strong { color: var(--red-text); }
-
   .sec-label { font-size: 11px; font-weight: 600; color: var(--text3); letter-spacing: 0.08em; text-transform: uppercase; margin: 1.25rem 0 0.6rem; }
   .car-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 10px; overflow: hidden; }
   .car-header { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
@@ -105,7 +106,6 @@
   .rider-row { display: flex; align-items: center; gap: 10px; }
   .rider-row .avatar { width: 30px; height: 30px; font-size: 11px; }
   .empty-slot { font-size: 12px; color: var(--text3); font-style: italic; }
-
   .inline-edit { padding: 10px 16px 12px; border-top: 1px solid var(--border); background: var(--surface2); display: none; }
   .inline-edit.open { display: block; }
   .inline-edit-row { display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; }
@@ -117,13 +117,11 @@
   .ie-cancel { height: 32px; padding: 0 12px; border-radius: var(--radius); border: 1px solid var(--border2); background: transparent; color: var(--text2); font-size: 13px; font-family: "DM Sans", sans-serif; cursor: pointer; }
   .ie-delete { height: 32px; padding: 0 12px; border-radius: var(--radius); border: 1px solid #f0bbbb; background: transparent; color: var(--red-text); font-size: 13px; font-family: "DM Sans", sans-serif; cursor: pointer; }
   .ie-delete:hover { background: var(--red-bg); }
-
   .unassigned-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 12px 16px; }
   .unassigned-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 6px 0; }
   .unassigned-row .avatar { width: 30px; height: 30px; font-size: 11px; flex-shrink: 0; }
   .assign-select { height: 32px; padding: 0 8px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface2); color: var(--text); font-size: 13px; font-family: "DM Sans", sans-serif; outline: none; cursor: pointer; }
   .no-drivers { font-size: 13px; color: var(--text3); font-style: italic; padding: 0.75rem 0; }
-
   @media (max-width: 600px) {
     body { padding: 1rem 0.75rem 3rem; }
     #tripTitleDisplay { font-size: 20px; }
@@ -131,6 +129,9 @@
     .edit-grid { grid-template-columns: 1fr; }
     .edit-field.full { grid-column: 1; }
     .strava-3 { grid-template-columns: 1fr; }
+    .link-edit-row { flex-direction: column; align-items: stretch; }
+    .link-edit-row .hide-toggle { width: auto; }
+    .link-label-input, .link-url-input { flex: 1 1 auto; width: 100%; }
     .form-row { flex-direction: column; align-items: stretch; }
     .f { width: 100% !important; }
     #nameInput, #phoneInput, #roleSelect, #seatsInput { width: 100% !important; }
@@ -147,7 +148,6 @@
 </head>
 <body>
 <div class="page">
-
   <div class="modal-overlay" id="pwModal">
     <div class="modal">
       <h3>Admin access</h3>
@@ -160,10 +160,10 @@
       </div>
     </div>
   </div>
-
   <div class="trip-header">
     <div class="trip-title-row">
-      <img src="logo1.png" alt="NBR Trail Running" />
+      <div class="logo-box">
+        <img src="logo1.png" alt="NBR Trail Running" />
       </div>
       <div id="tripTitleDisplay" class="placeholder">Trail Run Carpool</div>
       <button class="edit-btn" id="editDetailsBtn">Edit details</button>
@@ -175,19 +175,45 @@
         <div class="edit-field full"><label>Run name</label><input type="text" id="tripTitle" placeholder="e.g. Harriman 10-miler" /></div>
         <div class="edit-field"><label>Date</label><input type="date" id="tripDate" /></div>
         <div class="edit-field"><label>Time</label><input type="time" id="tripTime" /></div>
-        <div class="edit-field"><label>Meeting location URL</label><input type="text" id="meetUrl" placeholder="maps.google.com/..." /></div>
-        <div class="edit-field"><label>Run location URL</label><input type="text" id="runUrl" placeholder="alltrails.com/..." /></div>
-        <div class="edit-field"><label>Post-run bagels URL</label><input type="text" id="bagelUrl" placeholder="yelp.com/..." /></div>
-        <div class="strava-3">
-          <div class="edit-field"><label>Strava route 1</label><input type="text" id="strava1" placeholder="strava.com/routes/..." /></div>
-          <div class="edit-field"><label>Strava route 2</label><input type="text" id="strava2" placeholder="strava.com/routes/..." /></div>
-          <div class="edit-field"><label>Strava route 3</label><input type="text" id="strava3" placeholder="strava.com/routes/..." /></div>
+        <div class="edit-field full">
+          <label>Buttons (uncheck to hide, edit text to rename)</label>
+          <div class="link-edit-list">
+            <div class="link-edit-row">
+              <label class="hide-toggle"><input type="checkbox" id="meetHidden" /> Hide</label>
+              <input type="text" id="meetLabel" class="link-label-input" placeholder="Meeting spot" />
+              <input type="text" id="meetUrl" class="link-url-input" placeholder="maps.google.com/..." />
+            </div>
+            <div class="link-edit-row">
+              <label class="hide-toggle"><input type="checkbox" id="runHidden" /> Hide</label>
+              <input type="text" id="runLabel" class="link-label-input" placeholder="Run location" />
+              <input type="text" id="runUrl" class="link-url-input" placeholder="alltrails.com/..." />
+            </div>
+            <div class="link-edit-row">
+              <label class="hide-toggle"><input type="checkbox" id="strava1Hidden" /> Hide</label>
+              <input type="text" id="strava1Label" class="link-label-input" placeholder="Strava route 1" />
+              <input type="text" id="strava1" class="link-url-input" placeholder="strava.com/routes/..." />
+            </div>
+            <div class="link-edit-row">
+              <label class="hide-toggle"><input type="checkbox" id="strava2Hidden" /> Hide</label>
+              <input type="text" id="strava2Label" class="link-label-input" placeholder="Strava route 2" />
+              <input type="text" id="strava2" class="link-url-input" placeholder="strava.com/routes/..." />
+            </div>
+            <div class="link-edit-row">
+              <label class="hide-toggle"><input type="checkbox" id="strava3Hidden" /> Hide</label>
+              <input type="text" id="strava3Label" class="link-label-input" placeholder="Strava route 3" />
+              <input type="text" id="strava3" class="link-url-input" placeholder="strava.com/routes/..." />
+            </div>
+            <div class="link-edit-row">
+              <label class="hide-toggle"><input type="checkbox" id="bagelHidden" /> Hide</label>
+              <input type="text" id="bagelLabel" class="link-label-input" placeholder="Post-run bagels" />
+              <input type="text" id="bagelUrl" class="link-url-input" placeholder="yelp.com/..." />
+            </div>
+          </div>
         </div>
       </div>
       <button class="save-btn" id="saveDetailsBtn">Save</button>
     </div>
   </div>
-
   <div class="add-card">
     <h2>Carpool sign-up</h2>
     <p class="sub">Sign up as a driver or a rider. If you sign up to be a rider your name will be listed at the bottom under unassigned riders. You can then choose your ride by assigning yourself to a driver. If there are no available seats, hold tight we'll find one!</p>
@@ -205,7 +231,6 @@
     </div>
     <div class="error" id="addError"></div>
   </div>
-
   <div class="summary-bar" id="summaryBar" style="display:none"></div>
   <div id="driversSection"></div>
   <div id="unassignedSection"></div>
@@ -214,11 +239,9 @@
     <button id="clearBtn" style="font-size:12px;color:var(--text3);background:none;border:none;cursor:pointer;text-decoration:underline;font-family:'DM Sans',sans-serif;">Admin: clear all data</button>
   </div>
 </div>
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue, set, update, remove, push } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
 // ================================================================
 //  YOUR FIREBASE CONFIG — replace all values below with your own
 // ================================================================
@@ -231,19 +254,15 @@ const firebaseConfig = {
   messagingSenderId: "194779001011",
   appId:             "1:194779001011:web:753ec5e4ad9446c987c0c6"
 };
-
 //  Set your admin password here
 const ADMIN_PASSWORD = "trailboss";
 // ================================================================
-
 let adminUnlocked = false;
 let db, tripRef, driversRef, ridersRef;
 let driversData = {}, ridersData = {}, tripData = {};
-
 function isConfigured() {
   return firebaseConfig.apiKey !== "YOUR_API_KEY";
 }
-
 function init() {
   if (!isConfigured()) {
     setStatus(false, "Firebase not configured — see setup instructions");
@@ -255,7 +274,6 @@ function init() {
     tripRef    = ref(db, "trip");
     driversRef = ref(db, "drivers");
     ridersRef  = ref(db, "riders");
-
     onValue(tripRef, snap => {
       tripData = snap.val() || {};
       applyTripDisplay(tripData);
@@ -263,19 +281,16 @@ function init() {
     });
     onValue(driversRef, snap => { driversData = snap.val() || {}; render(); });
     onValue(ridersRef,  snap => { ridersData  = snap.val() || {}; render(); });
-
     setStatus(true, "Live — updates in real time");
   } catch(e) {
     setStatus(false, "Connection error — check Firebase config");
     console.error(e);
   }
 }
-
 function setStatus(live, text) {
   document.getElementById("statusDot").className = "status-dot" + (live ? " live" : "");
   document.getElementById("statusText").textContent = text;
 }
-
 // Admin / password
 window.requestAdmin = function() {
   if (adminUnlocked) { toggleEdit(); return; }
@@ -299,20 +314,19 @@ window.checkPassword = function() {
   }
 };
 document.getElementById("pwInput").addEventListener("keydown", e => { if (e.key === "Enter") window.checkPassword(); });
-
 let editOpen = false;
 function toggleEdit() {
   editOpen = !editOpen;
   document.getElementById("editPanel").classList.toggle("open", editOpen);
   document.querySelector(".edit-btn").textContent = editOpen ? "Done" : "Edit details";
 }
-
 // Trip details
 function makeHref(url) {
   if (!url) return null;
   return url.startsWith("http") ? url : "https://" + url;
 }
-function chip(url, label, cls) {
+function chip(url, label, cls, hidden) {
+  if (hidden) return "";
   const h = makeHref(url);
   if (!h) return "";
   return `<a class="chip ${cls}" href="${h}" target="_blank" rel="noopener">${label}</a>`;
@@ -328,21 +342,29 @@ function applyTripDisplay(t) {
     if (t.time) {
       const [h, m] = t.time.split(":");
       const td = new Date(); td.setHours(+h, +m);
-      str += " \u00b7 " + td.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+      str += " · " + td.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
     }
     dd.textContent = str;
   } else { dd.textContent = ""; }
   document.getElementById("linksBar").innerHTML =
-    chip(t.meetUrl,  "Meeting spot",   "meet")   +
-    chip(t.runUrl,   "Run location",   "run")    +
-    chip(t.strava1,  "Strava route 1", "strava") +
-    chip(t.strava2,  "Strava route 2", "strava") +
-    chip(t.strava3,  "Strava route 3", "strava") +
-    chip(t.bagelUrl, "Post-run bagels","bagel");
+    chip(t.meetUrl,  t.meetLabel   || "Meeting spot",    "meet",   t.meetHidden)   +
+    chip(t.runUrl,   t.runLabel    || "Run location",    "run",    t.runHidden)    +
+    chip(t.strava1,  t.strava1Label || "Strava route 1", "strava", t.strava1Hidden) +
+    chip(t.strava2,  t.strava2Label || "Strava route 2", "strava", t.strava2Hidden) +
+    chip(t.strava3,  t.strava3Label || "Strava route 3", "strava", t.strava3Hidden) +
+    chip(t.bagelUrl, t.bagelLabel  || "Post-run bagels", "bagel",  t.bagelHidden);
 }
 function restoreEditFields(t) {
-  const map = { tripTitle:"title", tripDate:"date", tripTime:"time", meetUrl:"meetUrl", runUrl:"runUrl", bagelUrl:"bagelUrl", strava1:"strava1", strava2:"strava2", strava3:"strava3" };
+  const map = {
+    tripTitle: "title", tripDate: "date", tripTime: "time",
+    meetUrl: "meetUrl", runUrl: "runUrl", bagelUrl: "bagelUrl",
+    strava1: "strava1", strava2: "strava2", strava3: "strava3",
+    meetLabel: "meetLabel", runLabel: "runLabel", bagelLabel: "bagelLabel",
+    strava1Label: "strava1Label", strava2Label: "strava2Label", strava3Label: "strava3Label"
+  };
   Object.entries(map).forEach(([id, key]) => { const el = document.getElementById(id); if (el) el.value = t[key] || ""; });
+  const hiddenMap = { meetHidden: "meetHidden", runHidden: "runHidden", bagelHidden: "bagelHidden", strava1Hidden: "strava1Hidden", strava2Hidden: "strava2Hidden", strava3Hidden: "strava3Hidden" };
+  Object.entries(hiddenMap).forEach(([id, key]) => { const el = document.getElementById(id); if (el) el.checked = !!t[key]; });
 }
 window.saveDetails = function() {
   if (!isConfigured()) return;
@@ -356,11 +378,22 @@ window.saveDetails = function() {
     strava2:  document.getElementById("strava2").value,
     strava3:  document.getElementById("strava3").value,
     bagelUrl: document.getElementById("bagelUrl").value,
+    meetLabel:    document.getElementById("meetLabel").value.trim(),
+    runLabel:     document.getElementById("runLabel").value.trim(),
+    strava1Label: document.getElementById("strava1Label").value.trim(),
+    strava2Label: document.getElementById("strava2Label").value.trim(),
+    strava3Label: document.getElementById("strava3Label").value.trim(),
+    bagelLabel:   document.getElementById("bagelLabel").value.trim(),
+    meetHidden:    document.getElementById("meetHidden").checked,
+    runHidden:     document.getElementById("runHidden").checked,
+    strava1Hidden: document.getElementById("strava1Hidden").checked,
+    strava2Hidden: document.getElementById("strava2Hidden").checked,
+    strava3Hidden: document.getElementById("strava3Hidden").checked,
+    bagelHidden:   document.getElementById("bagelHidden").checked,
   };
   set(tripRef, t);
   toggleEdit();
 };
-
 // Participants
 window.toggleSeats = function() {
   document.getElementById("seatsField").style.display =
@@ -395,7 +428,6 @@ window.driverToRider = function(id) {
   // Remove driver entry
   remove(ref(db, "drivers/" + id));
 };
-
 window.removeDriver = function(id) {
   Object.entries(ridersData).forEach(([rid, r]) => {
     if (r.driverId === id) update(ref(db, "riders/" + rid), { driverId: null });
@@ -443,24 +475,20 @@ window.requestClear = function() {
     set(ref(db, "riders"), null);
   }
 };
-
 window.toggleDriverEdit    = id => document.getElementById("driver-edit-"  + id)?.classList.toggle("open");
 window.toggleRiderEdit     = id => document.getElementById("rider-edit-"   + id)?.classList.toggle("open");
 window.toggleUnassignedEdit = id => document.getElementById("urider-edit-" + id)?.classList.toggle("open");
-
 // Render
 function initials(name) {
   return name.trim().split(/\s+/).map(w => w[0]).join("").toUpperCase().slice(0,2);
 }
 function render() { renderSummary(); renderDrivers(); renderUnassigned(); }
-
 function renderSummary() {}
-
 function renderDrivers() {
   const sec = document.getElementById("driversSection");
   const entries = Object.entries(driversData);
   if (!entries.length) {
-    sec.innerHTML = Object.keys(ridersData).length ? "<p class='no-drivers'>No drivers yet \u2014 be the first to volunteer!</p>" : "";
+    sec.innerHTML = Object.keys(ridersData).length ? "<p class='no-drivers'>No drivers yet — be the first to volunteer!</p>" : "";
     return;
   }
   sec.innerHTML = "<div class='sec-label'>Drivers &amp; passengers</div>";
@@ -520,7 +548,6 @@ function renderDrivers() {
     sec.appendChild(card);
   });
 }
-
 function renderUnassigned() {
   const unassigned = Object.entries(ridersData).filter(([, r]) => !r.driverId);
   const sec = document.getElementById("unassignedSection");
@@ -571,9 +598,7 @@ function renderUnassigned() {
   });
   sec.appendChild(box);
 }
-
 init();
-
 // Wire up static buttons (module scope fix)
 document.getElementById("clearBtn").addEventListener("click", () => window.requestClear());
 document.getElementById("editDetailsBtn").addEventListener("click", () => window.requestAdmin());
