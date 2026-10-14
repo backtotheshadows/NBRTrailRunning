@@ -48,6 +48,14 @@
   .edit-field label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; }
   .edit-field input { height: 36px; padding: 0 10px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface2); color: var(--text); font-size: 13px; font-family: "DM Sans", sans-serif; outline: none; }
   .edit-field input:focus { border-color: #7aab5a; box-shadow: 0 0 0 3px rgba(122,171,90,0.15); }
+  .link-edit-list { display: flex; flex-direction: column; gap: 8px; }
+  .link-edit-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 6px 8px; }
+  .link-edit-row .hide-toggle { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text2); white-space: nowrap; width: 54px; flex-shrink: 0; }
+  .link-edit-row .hide-toggle input { width: 14px; height: 14px; flex-shrink: 0; }
+  .link-label-input, .link-url-input { height: 34px; padding: 0 10px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 13px; font-family: "DM Sans", sans-serif; outline: none; }
+  .link-label-input { flex: 0 0 130px; }
+  .link-url-input { flex: 1 1 180px; }
+  .link-label-input:focus, .link-url-input:focus { border-color: #7aab5a; box-shadow: 0 0 0 3px rgba(122,171,90,0.15); }
   .strava-3 { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
   .save-btn { margin-top: 12px; padding: 8px 20px; border-radius: var(--radius); border: none; background: #3d7a28; color: #fff; font-size: 14px; font-family: "DM Sans", sans-serif; font-weight: 500; cursor: pointer; }
   .save-btn:hover { background: #2f6020; }
@@ -132,6 +140,9 @@
     .edit-grid { grid-template-columns: 1fr; }
     .edit-field.full { grid-column: 1; }
     .strava-3 { grid-template-columns: 1fr; }
+    .link-edit-row { flex-direction: column; align-items: stretch; }
+    .link-edit-row .hide-toggle { width: auto; }
+    .link-label-input, .link-url-input { flex: 1 1 auto; width: 100%; }
     .form-row { flex-direction: column; align-items: stretch; }
     .f { width: 100% !important; }
     #nameInput, #phoneInput, #roleSelect, #seatsInput { width: 100% !important; }
@@ -177,15 +188,45 @@
         <div class="edit-field full"><label>Run name</label><input type="text" id="tripTitle" placeholder="e.g. Harriman 10-miler" /></div>
         <div class="edit-field"><label>Date</label><input type="date" id="tripDate" /></div>
         <div class="edit-field"><label>Time</label><input type="time" id="tripTime" /></div>
-        <div class="edit-field"><label>Meeting location URL</label><input type="text" id="meetUrl" placeholder="maps.google.com/..." /></div>
-        <div class="edit-field"><label>Run location URL</label><input type="text" id="runUrl" placeholder="alltrails.com/..." /></div>
-        <div class="edit-field"><label>Post-run bagels URL</label><input type="text" id="bagelUrl" placeholder="yelp.com/..." /></div>
-        <div class="edit-field"><label>Tip the drivers URL</label><input type="text" id="tipUrl" placeholder="venmo.com/..." /></div>
-        <div class="edit-field"><label>Tip button text</label><input type="text" id="tipLabel" placeholder="Tip your drivers" /></div>
-        <div class="strava-3">
-          <div class="edit-field"><label>Strava route 1</label><input type="text" id="strava1" placeholder="strava.com/routes/..." /></div>
-          <div class="edit-field"><label>Strava route 2</label><input type="text" id="strava2" placeholder="strava.com/routes/..." /></div>
-          <div class="edit-field"><label>Strava route 3</label><input type="text" id="strava3" placeholder="strava.com/routes/..." /></div>
+        <div class="edit-field full">
+          <label>Buttons (uncheck to hide, edit text to rename)</label>
+          <div class="link-edit-list">
+            <div class="link-edit-row">
+              <label class="hide-toggle"><input type="checkbox" id="meetHidden" /> Hide</label>
+              <input type="text" id="meetLabel" class="link-label-input" placeholder="Meeting spot" />
+              <input type="text" id="meetUrl" class="link-url-input" placeholder="maps.google.com/..." />
+            </div>
+            <div class="link-edit-row">
+              <label class="hide-toggle"><input type="checkbox" id="runHidden" /> Hide</label>
+              <input type="text" id="runLabel" class="link-label-input" placeholder="Run location" />
+              <input type="text" id="runUrl" class="link-url-input" placeholder="alltrails.com/..." />
+            </div>
+            <div class="link-edit-row">
+              <label class="hide-toggle"><input type="checkbox" id="strava1Hidden" /> Hide</label>
+              <input type="text" id="strava1Label" class="link-label-input" placeholder="Strava route 1" />
+              <input type="text" id="strava1" class="link-url-input" placeholder="strava.com/routes/..." />
+            </div>
+            <div class="link-edit-row">
+              <label class="hide-toggle"><input type="checkbox" id="strava2Hidden" /> Hide</label>
+              <input type="text" id="strava2Label" class="link-label-input" placeholder="Strava route 2" />
+              <input type="text" id="strava2" class="link-url-input" placeholder="strava.com/routes/..." />
+            </div>
+            <div class="link-edit-row">
+              <label class="hide-toggle"><input type="checkbox" id="strava3Hidden" /> Hide</label>
+              <input type="text" id="strava3Label" class="link-label-input" placeholder="Strava route 3" />
+              <input type="text" id="strava3" class="link-url-input" placeholder="strava.com/routes/..." />
+            </div>
+            <div class="link-edit-row">
+              <label class="hide-toggle"><input type="checkbox" id="bagelHidden" /> Hide</label>
+              <input type="text" id="bagelLabel" class="link-label-input" placeholder="Post-run bagels" />
+              <input type="text" id="bagelUrl" class="link-url-input" placeholder="yelp.com/..." />
+            </div>
+            <div class="link-edit-row">
+              <label class="hide-toggle"><input type="checkbox" id="tipHidden" /> Hide</label>
+              <input type="text" id="tipLabel" class="link-label-input" placeholder="Tip your drivers" />
+              <input type="text" id="tipUrl" class="link-url-input" placeholder="venmo.com/..." />
+            </div>
+          </div>
         </div>
       </div>
       <button class="save-btn" id="saveDetailsBtn">Save</button>
@@ -316,7 +357,8 @@ function makeHref(url) {
   if (!url) return null;
   return url.startsWith("http") ? url : "https://" + url;
 }
-function chip(url, label, cls) {
+function chip(url, label, cls, hidden) {
+  if (hidden) return "";
   const h = makeHref(url);
   if (!h) return "";
   return `<a class="chip ${cls}" href="${h}" target="_blank" rel="noopener">${label}</a>`;
@@ -337,17 +379,25 @@ function applyTripDisplay(t) {
     dd.textContent = str;
   } else { dd.textContent = ""; }
   document.getElementById("linksBar").innerHTML =
-    chip(t.meetUrl,  "Meeting spot",   "meet")   +
-    chip(t.runUrl,   "Run location",   "run")    +
-    chip(t.strava1,  "Strava route 1", "strava") +
-    chip(t.strava2,  "Strava route 2", "strava") +
-    chip(t.strava3,  "Strava route 3", "strava") +
-    chip(t.bagelUrl, "Post-run bagels","bagel")  +
-    chip(t.tipUrl,   t.tipLabel || "Tip your drivers","tip");
+    chip(t.meetUrl,  t.meetLabel   || "Meeting spot",    "meet",   t.meetHidden)   +
+    chip(t.runUrl,   t.runLabel    || "Run location",    "run",    t.runHidden)    +
+    chip(t.strava1,  t.strava1Label || "Strava route 1", "strava", t.strava1Hidden) +
+    chip(t.strava2,  t.strava2Label || "Strava route 2", "strava", t.strava2Hidden) +
+    chip(t.strava3,  t.strava3Label || "Strava route 3", "strava", t.strava3Hidden) +
+    chip(t.bagelUrl, t.bagelLabel  || "Post-run bagels", "bagel",  t.bagelHidden)  +
+    chip(t.tipUrl,   t.tipLabel    || "Tip your drivers", "tip",   t.tipHidden);
 }
 function restoreEditFields(t) {
-  const map = { tripTitle:"title", tripDate:"date", tripTime:"time", meetUrl:"meetUrl", runUrl:"runUrl", bagelUrl:"bagelUrl", tipUrl:"tipUrl", tipLabel:"tipLabel", strava1:"strava1", strava2:"strava2", strava3:"strava3" };
+  const map = {
+    tripTitle: "title", tripDate: "date", tripTime: "time",
+    meetUrl: "meetUrl", runUrl: "runUrl", bagelUrl: "bagelUrl", tipUrl: "tipUrl", tipLabel: "tipLabel",
+    strava1: "strava1", strava2: "strava2", strava3: "strava3",
+    meetLabel: "meetLabel", runLabel: "runLabel", bagelLabel: "bagelLabel",
+    strava1Label: "strava1Label", strava2Label: "strava2Label", strava3Label: "strava3Label"
+  };
   Object.entries(map).forEach(([id, key]) => { const el = document.getElementById(id); if (el) el.value = t[key] || ""; });
+  const hiddenMap = { meetHidden: "meetHidden", runHidden: "runHidden", bagelHidden: "bagelHidden", strava1Hidden: "strava1Hidden", strava2Hidden: "strava2Hidden", strava3Hidden: "strava3Hidden", tipHidden: "tipHidden" };
+  Object.entries(hiddenMap).forEach(([id, key]) => { const el = document.getElementById(id); if (el) el.checked = !!t[key]; });
 }
 window.saveDetails = function() {
   if (!isConfigured()) return;
@@ -363,6 +413,19 @@ window.saveDetails = function() {
     bagelUrl: document.getElementById("bagelUrl").value,
     tipUrl:   document.getElementById("tipUrl").value,
     tipLabel: document.getElementById("tipLabel").value.trim(),
+    tipHidden: document.getElementById("tipHidden").checked,
+    meetLabel:    document.getElementById("meetLabel").value.trim(),
+    runLabel:     document.getElementById("runLabel").value.trim(),
+    strava1Label: document.getElementById("strava1Label").value.trim(),
+    strava2Label: document.getElementById("strava2Label").value.trim(),
+    strava3Label: document.getElementById("strava3Label").value.trim(),
+    bagelLabel:   document.getElementById("bagelLabel").value.trim(),
+    meetHidden:    document.getElementById("meetHidden").checked,
+    runHidden:     document.getElementById("runHidden").checked,
+    strava1Hidden: document.getElementById("strava1Hidden").checked,
+    strava2Hidden: document.getElementById("strava2Hidden").checked,
+    strava3Hidden: document.getElementById("strava3Hidden").checked,
+    bagelHidden:   document.getElementById("bagelHidden").checked,
   };
   set(tripRef, t);
   toggleEdit();
