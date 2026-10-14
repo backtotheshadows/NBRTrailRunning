@@ -35,6 +35,7 @@
   .chip.run   { background: var(--green-bg); color: var(--green-text); }
   .chip.strava { background: var(--orange-bg); color: var(--orange-text); }
   .chip.bagel { background: var(--amber-bg); color: var(--amber-text); }
+  .chip.tip   { background: #2d6b1f; color: #ffffff; }
   .edit-btn { font-size: 12px; padding: 5px 14px; border-radius: 99px; border: 1px solid var(--border2); background: transparent; color: var(--text2); cursor: pointer; white-space: nowrap; font-family: "DM Sans", sans-serif; transition: background 0.15s; }
   .edit-btn:hover { background: var(--surface2); }
   .edit-panel { margin-top: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--border); display: none; }
@@ -208,6 +209,11 @@
               <input type="text" id="bagelLabel" class="link-label-input" placeholder="Post-run bagels" />
               <input type="text" id="bagelUrl" class="link-url-input" placeholder="yelp.com/..." />
             </div>
+            <div class="link-edit-row">
+              <label class="hide-toggle"><input type="checkbox" id="tipHidden" /> Hide</label>
+              <input type="text" id="tipLabel" class="link-label-input" placeholder="Tip your drivers" />
+              <input type="text" id="tipUrl" class="link-url-input" placeholder="venmo.com/..." />
+            </div>
           </div>
         </div>
       </div>
@@ -352,18 +358,19 @@ function applyTripDisplay(t) {
     chip(t.strava1,  t.strava1Label || "Strava route 1", "strava", t.strava1Hidden) +
     chip(t.strava2,  t.strava2Label || "Strava route 2", "strava", t.strava2Hidden) +
     chip(t.strava3,  t.strava3Label || "Strava route 3", "strava", t.strava3Hidden) +
-    chip(t.bagelUrl, t.bagelLabel  || "Post-run bagels", "bagel",  t.bagelHidden);
+    chip(t.bagelUrl, t.bagelLabel  || "Post-run bagels", "bagel",  t.bagelHidden)  +
+    chip(t.tipUrl,   t.tipLabel    || "Tip your drivers", "tip",   t.tipHidden);
 }
 function restoreEditFields(t) {
   const map = {
     tripTitle: "title", tripDate: "date", tripTime: "time",
-    meetUrl: "meetUrl", runUrl: "runUrl", bagelUrl: "bagelUrl",
+    meetUrl: "meetUrl", runUrl: "runUrl", bagelUrl: "bagelUrl", tipUrl: "tipUrl", tipLabel: "tipLabel",
     strava1: "strava1", strava2: "strava2", strava3: "strava3",
     meetLabel: "meetLabel", runLabel: "runLabel", bagelLabel: "bagelLabel",
     strava1Label: "strava1Label", strava2Label: "strava2Label", strava3Label: "strava3Label"
   };
   Object.entries(map).forEach(([id, key]) => { const el = document.getElementById(id); if (el) el.value = t[key] || ""; });
-  const hiddenMap = { meetHidden: "meetHidden", runHidden: "runHidden", bagelHidden: "bagelHidden", strava1Hidden: "strava1Hidden", strava2Hidden: "strava2Hidden", strava3Hidden: "strava3Hidden" };
+  const hiddenMap = { meetHidden: "meetHidden", runHidden: "runHidden", bagelHidden: "bagelHidden", strava1Hidden: "strava1Hidden", strava2Hidden: "strava2Hidden", strava3Hidden: "strava3Hidden", tipHidden: "tipHidden" };
   Object.entries(hiddenMap).forEach(([id, key]) => { const el = document.getElementById(id); if (el) el.checked = !!t[key]; });
 }
 window.saveDetails = function() {
@@ -378,6 +385,9 @@ window.saveDetails = function() {
     strava2:  document.getElementById("strava2").value,
     strava3:  document.getElementById("strava3").value,
     bagelUrl: document.getElementById("bagelUrl").value,
+    tipUrl:   document.getElementById("tipUrl").value,
+    tipLabel: document.getElementById("tipLabel").value.trim(),
+    tipHidden: document.getElementById("tipHidden").checked,
     meetLabel:    document.getElementById("meetLabel").value.trim(),
     runLabel:     document.getElementById("runLabel").value.trim(),
     strava1Label: document.getElementById("strava1Label").value.trim(),
