@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="/logo1_f.png">
+<title>Admin · North Brooklyn Trail Runners</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#2b2a26; --muted:#6b675e; --line:#e4e0d6; --green:#3f6b2a; --red:#a33; --bg:#f7f5f0; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:"Inter",system-ui,sans-serif; line-height:1.5; }
+  .wrap { max-width:720px; margin:0 auto; padding:24px 16px 60px; }
+  h1 { font-size:1.4rem; margin:0 0 4px; font-weight:500; }
+  h2 { font-size:1.1rem; margin:28px 0 10px; font-weight:500; }
+  .muted { color:var(--muted); font-size:.9rem; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:12px; padding:16px; margin-top:12px; }
+  label { display:block; font-size:.85rem; color:var(--muted); margin:10px 0 4px; }
+  input, select, textarea { width:100%; font:inherit; padding:9px 10px; border:1px solid #cfc9bb; border-radius:8px; background:#fff; }
+  textarea { min-height:140px; resize:vertical; }
+  .row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  @media (max-width:520px){ .row { grid-template-columns:1fr; } }
+  button { font:inherit; padding:9px 16px; border-radius:999px; border:1px solid #cfc9bb; background:#fff; cursor:pointer; }
+  button.primary { background:var(--green); color:#fff; border-color:var(--green); }
+  button.danger { color:var(--red); }
+  .actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
+  .bar { display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+  .item { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--line); }
+  .item:last-child { border-bottom:0; }
+  .item .txt { flex:1; min-width:0; }
+  .item.past { opacity:.45; }
+  .item button { padding:5px 12px; font-size:.85rem; }
+  .dot { width:12px; height:12px; border-radius:50%; flex:0 0 12px; }
+  .dot.wildcard{background:#111} .dot.rockefeller{background:#1e9a1e} .dot.race{background:#f29a0c}
+  .msg { margin-top:10px; font-size:.9rem; }
+  .msg.err { color:var(--red); }
+  .hidden { display:none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="bar">
+    <div>
+      <h1>Trail Runners admin</h1>
+      <div class="muted" id="who">Not signed in</div>
+    </div>
+    <div>
+      <button id="signin" class="primary">Sign in with Google</button>
+      <button id="signout" class="hidden">Sign out</button>
+    </div>
+  </div>
+
+  <div id="app" class="hidden">
+
+    <!-- Add / edit form -->
+    <h2 id="formTitle">Add an event</h2>
+    <div class="card">
+      <div class="row">
+        <div>
+          <label for="kind">Event</label>
+          <select id="kind">
+            <option value="rockefeller">Run: Rockefeller (green)</option>
+            <option value="wildcard">Run: Wildcard (black)</option>
+            <option value="race">Race (orange)</option>
+          </select>
+        </div>
+        <div>
+          <label for="date">Date</label>
+          <input type="date" id="date">
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label for="name">Name</label>
+          <input id="name" placeholder="Rockefeller">
+        </div>
+        <div>
+          <label for="location">Location</label>
+          <input id="location" placeholder="Rockefeller State Park">
+        </div>
+      </div>
+      <div id="distWrap">
+        <label for="distances">Distances</label>
+        <input id="distances" placeholder="11m, 20m, 50k, 50m">
+      </div>
+      <label for="link">Heylo link (optional)</label>
+      <input id="link" type="url" placeholder="https://heylo.com/…">
+      <div class="actions">
+        <button class="primary" id="save">Add event</button>
+        <button id="cancel" class="hidden">Cancel edit</button>
+      </div>
+      <div class="msg" id="formMsg"></div>
+    </div>
+
+    <h2>Runs</h2>
+    <div class="card" id="runsList"></div>
+
+    <h2>Races</h2>
+    <div class="card" id="racesList"></div>
+
+    <h2>Intro paragraph</h2>
+    <div class="card">
+      <textarea id="intro" placeholder="Leave blank to use the paragraph written in index.html"></textarea>
+      <div class="actions"><button class="primary" id="saveIntro">Save intro</button></div>
+      <div class="msg" id="introMsg"></div>
+    </div>
+
+    <div class="card hidden" id="seedCard">
+      <p style="margin:0">The schedule is empty. Load the dates from your sketch to start?</p>
+      <div class="actions"><button class="primary" id="seed">Load starter schedule</button></div>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getDatabase, ref, onValue, push, set, update, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+  import { firebaseConfig } from "./firebase-config.js";
+
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getDatabase(app);
+  const $ = (id) => document.getElementById(id);
+
+  let editing = null;            // { section, key } while editing
+  let data = { runs:{}, races:{} };
+
+  // ---------- Sign in / out ----------
+  $("signin").onclick  = () => signInWithPopup(auth, new GoogleAuthProvider()).catch(e => alert(e.message));
+  $("signout").onclick = () => signOut(auth);
+
+  onAuthStateChanged(auth, (user) => {
+    $("who").textContent = user ? "Signed in as " + user.email : "Not signed in";
+    $("signin").classList.toggle("hidden", !!user);
+    $("signout").classList.toggle("hidden", !user);
+    $("app").classList.toggle("hidden", !user);
+  });
+
+  // ---------- Live data ----------
+  onValue(ref(db, "landing"), (snap) => {
+    const d = snap.val() || {};
+    data = { runs: d.runs || {}, races: d.races || {} };
+    if (document.activeElement !== $("intro")) $("intro").value = d.intro || "";
+    drawList("runs", "runsList");
+    drawList("races", "racesList");
+    $("seedCard").classList.toggle("hidden", Object.keys(data.runs).length + Object.keys(data.races).length > 0);
+  });
+
+  function niceDate(iso) {
+    const [y, m, d] = iso.split("-").map(Number);
+    return new Date(y, m - 1, d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  }
+  function esc(s) { return String(s || "").replace(/[&<>"]/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[c])); }
+
+  function drawList(section, elId) {
+    const today = new Date().toISOString().slice(0, 10);
+    const entries = Object.entries(data[section]).sort((a, b) => a[1].date.localeCompare(b[1].date));
+    const el = $(elId);
+    if (!entries.length) { el.innerHTML = '<div class="muted">Nothing yet.</div>'; return; }
+    el.innerHTML = entries.map(([key, e]) => `
+      <div class="item ${e.date < today ? "past" : ""}">
+        <span class="dot ${esc(e.type)}"></span>
+        <div class="txt">
+          <strong>${niceDate(e.date)}</strong> · ${esc(e.name)}
+          <div class="muted">${[e.location, e.distances].filter(Boolean).map(esc).join(" · ")}${e.link ? "" : " · no Heylo link yet"}</div>
+        </div>
+        <button data-edit="${section}/${key}">Edit</button>
+        <button class="danger" data-del="${section}/${key}">Delete</button>
+      </div>`).join("");
+  }
+
+  // ---------- Edit / delete buttons ----------
+  document.addEventListener("click", (ev) => {
+    const ed = ev.target.dataset.edit, del = ev.target.dataset.del;
+    if (ed) {
+      const [section, key] = ed.split("/");
+      const e = data[section][key];
+      editing = { section, key };
+      $("kind").value = e.type; $("date").value = e.date; $("name").value = e.name || "";
+      $("location").value = e.location || ""; $("distances").value = e.distances || ""; $("link").value = e.link || "";
+      syncKind(false);
+      $("formTitle").textContent = "Edit event";
+      $("save").textContent = "Save changes";
+      $("cancel").classList.remove("hidden");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    if (del) {
+      const [section, key] = del.split("/");
+      const e = data[section][key];
+      if (confirm(`Delete ${e.name} on ${niceDate(e.date)}?`)) remove(ref(db, `landing/${del}`)).catch(showErr("formMsg"));
+    }
+  });
+
+  // ---------- Form ----------
+  function syncKind(fillDefaults = true) {
+    const k = $("kind").value;
+    $("distWrap").classList.toggle("hidden", k !== "race");
+    if (fillDefaults && !editing) {
+      if (k === "rockefeller") { $("name").value = "Rockefeller"; $("location").value = "Rockefeller State Park"; }
+      if (k === "wildcard")    { $("name").value = "Wildcard";    $("location").value = ""; }
+      if (k === "race")        { $("name").value = "";            $("location").value = ""; }
+    }
+  }
+  $("kind").onchange = () => syncKind(true);
+  syncKind(true);
+
+  function resetForm() {
+    editing = null;
+    ["date", "distances", "link"].forEach(id => $(id).value = "");
+    $("formTitle").textContent = "Add an event";
+    $("save").textContent = "Add event";
+    $("cancel").classList.add("hidden");
+    syncKind(true);
+  }
+  $("cancel").onclick = resetForm;
+
+  function showErr(msgId) {
+    return (e) => {
+      $(msgId).className = "msg err";
+      $(msgId).textContent = /permission/i.test(e.message)
+        ? "This Google account isn't on the admin list."
+        : e.message;
+    };
+  }
+  function showOk(msgId, text) {
+    $(msgId).className = "msg"; $(msgId).textContent = text;
+    setTimeout(() => $(msgId).textContent = "", 3000);
+  }
+
+  $("save").onclick = () => {
+    const type = $("kind").value;
+    const ev = {
+      date: $("date").value, type,
+      name: $("name").value.trim(), location: $("location").value.trim(),
+      link: $("link").value.trim()
+    };
+    if (type === "race") ev.distances = $("distances").value.trim();
+    if (!ev.date || !ev.name) { $("formMsg").className = "msg err"; $("formMsg").textContent = "Add a date and a name first."; return; }
+
+    const section = type === "race" ? "races" : "runs";
+    let job;
+    if (editing && editing.section === section) {
+      job = set(ref(db, `landing/${section}/${editing.key}`), ev);
+    } else if (editing) {             // moved between runs and races
+      job = update(ref(db, "landing"), { [`${editing.section}/${editing.key}`]: null, [`${section}/${push(ref(db)).key}`]: ev });
+    } else {
+      job = push(ref(db, `landing/${section}`), ev);
+    }
+    const wasEditing = !!editing;
+    job.then(() => { showOk("formMsg", wasEditing ? "Saved." : "Added."); resetForm(); }).catch(showErr("formMsg"));
+  };
+
+  $("saveIntro").onclick = () =>
+    set(ref(db, "landing/intro"), $("intro").value.trim() || null)
+      .then(() => showOk("introMsg", "Intro saved.")).catch(showErr("introMsg"));
+
+  // ---------- One-time starter schedule ----------
+  $("seed").onclick = () => {
+    const runs = [
+      ["2026-11-15", "wildcard",    "Wildcard",    "Staten Island"],
+      ["2026-11-28", "rockefeller", "Rockefeller", "Rockefeller State Park"],
+      ["2026-12-13", "rockefeller", "Rockefeller", "Rockefeller State Park"],
+      ["2027-01-09", "wildcard",    "Wildcard",    "TBD"],
+      ["2027-01-30", "rockefeller", "Rockefeller", "Rockefeller State Park"],
+      ["2027-02-13", "wildcard",    "Wildcard",    "South Mountain"],
+      ["2027-02-28", "rockefeller", "Rockefeller", "Rockefeller State Park"],
+    ];
+    const races = [
+      ["2027-03-06", "Squatchapple Trail Race", "South Mountain Reservation, NJ", "11m, 20m, 50k, 50m"],
+      ["2027-05-01", "Rock The Ridge",          "Mohonk Preserve, NY",            "50m, 26.2m, Relay"],
+    ];
+    const updates = {};
+    runs.forEach(([date, type, name, location]) => updates[`runs/${push(ref(db)).key}`] = { date, type, name, location, link: "" });
+    races.forEach(([date, name, location, distances]) => updates[`races/${push(ref(db)).key}`] = { date, type: "race", name, location, distances, link: "" });
+    update(ref(db, "landing"), updates).catch(showErr("formMsg"));
+  };
+</script>
+</body>
+</html>
